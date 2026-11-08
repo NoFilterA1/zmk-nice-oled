@@ -17,6 +17,10 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include "battery.h"
 #include "output.h"
 #include "screen_peripheral.h"
+#if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_PERIPHERAL_BONGO_CAT)
+#include "peripheral_bongo_cat.h"
+static struct zmk_widget_peripheral_bongo_cat peripheral_bongo_cat_widget;
+#endif
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -153,6 +157,13 @@ int zmk_widget_screen_init(struct zmk_widget_screen *widget, lv_obj_t *parent) {
 #endif
     widget_battery_status_init();
     widget_peripheral_status_init();
+
+#if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_PERIPHERAL_BONGO_CAT)
+    zmk_widget_peripheral_bongo_cat_init(&peripheral_bongo_cat_widget, canvas);
+    lv_obj_align(zmk_widget_peripheral_bongo_cat_obj(&peripheral_bongo_cat_widget),
+                 LV_ALIGN_TOP_LEFT, CONFIG_NICE_OLED_WIDGET_PERIPHERAL_BONGO_CAT_CUSTOM_X,
+                 CONFIG_NICE_OLED_WIDGET_PERIPHERAL_BONGO_CAT_CUSTOM_Y);
+#endif
 
 #if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL_WPM)
     zmk_widget_luna_init(&luna_widget, canvas);

@@ -101,6 +101,19 @@ config NICE_OLED_SLEEP_STATUS_BOOTLOADER
 
 ## ANIMATION ON CENTRAL AND PERIPHERAL END }}}
 ### WIDGET ON PERIPHERAL START {{{
+### PERIPHERAL BONGO CAT (reacts to the key presses of THIS half) {{{
+config NICE_OLED_WIDGET_PERIPHERAL_BONGO_CAT
+    bool "Bongo cat on the peripheral (reacts to local key presses)"
+    default n
+
+config NICE_OLED_WIDGET_PERIPHERAL_BONGO_CAT_CUSTOM_X
+    int "Peripheral bongo cat X"
+    default 0
+
+config NICE_OLED_WIDGET_PERIPHERAL_BONGO_CAT_CUSTOM_Y
+    int "Peripheral bongo cat Y"
+    default 0
+##}}}
 ### SMART_BATTERY {{{
 config NICE_OLED_WIDGET_ANIMATION_PERIPHERAL_SMART_BATTERY
     bool "Enable animation on peripheral"
@@ -245,6 +258,10 @@ config NICE_OLED_WIDGET_WPM_BONGO_CAT_ANIMATION_MS
 endif # NICE_OLED_WIDGET_WPM_BONGO_CAT }}}
 endif # NICE_OLED_WIDGET_WPM }}}
 ### NICE_OLED_WIDGET_RESPONSIVE {{{
+config NICE_OLED_WIDGET_LAYER_LADDER
+    bool "Left screen: base letter + layer ladder + mods + connection + battery"
+    default n
+
 config NICE_OLED_WIDGET_RESPONSIVE
     bool "Enable widget responsive"
     default n

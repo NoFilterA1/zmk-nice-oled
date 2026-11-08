@@ -53,6 +53,7 @@ if(CONFIG_ZMK_DISPLAY AND CONFIG_NICE_OLED_WIDGET_STATUS)
 
     zephyr_library_sources(assets/luna_images.c)
     zephyr_library_sources(assets/bongo_cat_images.c)
+    zephyr_library_sources_ifdef(CONFIG_NICE_OLED_WIDGET_PERIPHERAL_BONGO_CAT assets/responsive_bongo_cat_images_128x32.c widgets/peripheral_bongo_cat.c)
 
 
     if(NOT CONFIG_ZMK_SPLIT OR CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
@@ -67,6 +68,7 @@ if(CONFIG_ZMK_DISPLAY AND CONFIG_NICE_OLED_WIDGET_STATUS)
         # TODO
       endif()
 
+      zephyr_library_sources_ifdef(CONFIG_NICE_OLED_WIDGET_LAYER_LADDER widgets/layer_ladder.c)
       target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_HID_INDICATORS app PRIVATE widgets/hid_indicators.c)
       target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS_LUNA app PRIVATE widgets/modifiers.c)
       target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS_FIXED_SYMBOL app PRIVATE assets/modifiers_sym.c)

@@ -27,6 +27,9 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include "output.h"
 #include "profile.h"
 #include "screen.h"
+#if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_LAYER_LADDER)
+#include "layer_ladder.h"
+#endif
 
 #ifdef CONFIG_NICE_OLED_WIDGET_RAW_HID
 #include <lvgl.h>
@@ -859,6 +862,11 @@ static void draw_canvas(lv_obj_t *widget, const struct status_state *state) {
 
     // Draw widgets
     draw_background(canvas);
+#if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_LAYER_LADDER)
+    draw_layer_ladder(canvas, state);
+    rotate_canvas(canvas);
+    return;
+#endif
     draw_output_status(canvas, state);
 #if !IS_ENABLED(CONFIG_NICE_OLED_WIDGET_CENTRAL_SHOW_BATTERY_PERIPHERAL_ALL) &&                    \
     !IS_ENABLED(CONFIG_NICE_OLED_WIDGET_CENTRAL_SHOW_BATTERY_PERIPHERAL_ONLY) &&                   \
