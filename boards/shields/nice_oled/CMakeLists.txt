@@ -72,7 +72,7 @@ if(CONFIG_ZMK_DISPLAY AND CONFIG_NICE_OLED_WIDGET_STATUS)
       target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS_FIXED_SYMBOL app PRIVATE assets/modifiers_sym.c)
 
       if(CONFIG_NICE_OLED_WIDGET_RESPONSIVE)
-        # target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_RESPONSIVE_BONGO_CAT app PRIVATE assets/responsive_bongo_cat_images.c)
+        target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_RESPONSIVE_BONGO_CAT app PRIVATE assets/responsive_bongo_cat_images_128x32.c)
         target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_RESPONSIVE_BONGO_CAT app PRIVATE widgets/responsive_bongo_cat.c)
       endif()
 

@@ -18,7 +18,6 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 static lv_anim_t idle_anim;
 static lv_timer_t *idle_check_timer = NULL;
 
-/*
 LV_IMG_DECLARE(idle_img1);
 LV_IMG_DECLARE(idle_img2);
 LV_IMG_DECLARE(idle_img3);
@@ -30,21 +29,9 @@ LV_IMG_DECLARE(fast_img2);
 static const void *idle_images[] = {&idle_img1, &idle_img2, &idle_img3, &idle_img4, &idle_img5};
 
 static const void *tap_images[] = {&fast_img1, &fast_img2};
-*/
 
-LV_IMG_DECLARE(bongo_cat_both1_open_90);
-LV_IMG_DECLARE(bongo_cat_both1_open_90);
-LV_IMG_DECLARE(bongo_cat_both1_open_90);
-LV_IMG_DECLARE(bongo_cat_both1_90);
-LV_IMG_DECLARE(bongo_cat_both1_90);
-LV_IMG_DECLARE(bongo_cat_right2_90);
-LV_IMG_DECLARE(bongo_cat_left2_90);
 
-static const void *idle_images[] = {&bongo_cat_both1_open_90, &bongo_cat_both1_open_90,
-                                    &bongo_cat_both1_90, &bongo_cat_both1_90,
-                                    &bongo_cat_both1_open_90};
 
-static const void *tap_images[] = {&bongo_cat_right2_90, &bongo_cat_left2_90};
 
 #define IDLE_FRAMES 5
 #define TAP_FRAMES 2
