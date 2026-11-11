@@ -6,6 +6,10 @@
 #include <zephyr/kernel.h>
 #include <zmk/event_manager.h>
 #include <zmk/events/position_state_changed.h>
+#if __has_include(<nzmk/tap_signal_event.h>)
+#include <nzmk/tap_signal_event.h>
+#define NZMK_TAP_SIGNAL 1
+#endif
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -110,7 +114,12 @@ static void update_peripheral_bongo_cat_anim(struct zmk_widget_peripheral_bongo_
 
 static struct peripheral_bongo_cat_state peripheral_bongo_cat_get_state(const zmk_event_t *eh) {
     const struct zmk_position_state_changed *ev = as_zmk_position_state_changed(eh);
-    if (ev != NULL && ev->state) { // Only update on key press, not release
+#ifdef NZMK_TAP_SIGNAL
+    const struct nzmk_tap_signal *kev = as_nzmk_tap_signal(eh);
+#else
+    const void *kev = NULL;
+#endif
+    if ((ev != NULL && ev->state) || kev != NULL) { // Only on key press, not release
         current_state.key_pressed = true;
         current_state.last_tap = k_uptime_get_32();
     } else {
@@ -130,6 +139,9 @@ static void peripheral_bongo_cat_update_cb(struct peripheral_bongo_cat_state sta
 ZMK_DISPLAY_WIDGET_LISTENER(widget_peripheral_bongo_cat, struct peripheral_bongo_cat_state,
                             peripheral_bongo_cat_update_cb, peripheral_bongo_cat_get_state)
 ZMK_SUBSCRIPTION(widget_peripheral_bongo_cat, zmk_position_state_changed);
+#ifdef NZMK_TAP_SIGNAL
+ZMK_SUBSCRIPTION(widget_peripheral_bongo_cat, nzmk_tap_signal); /* signal from the left half (&tapsig) */
+#endif
 
 int zmk_widget_peripheral_bongo_cat_init(struct zmk_widget_peripheral_bongo_cat *widget,
                                          lv_obj_t *parent) {

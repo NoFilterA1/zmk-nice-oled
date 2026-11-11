@@ -29,6 +29,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include "screen.h"
 #if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_LAYER_LADDER)
 #include "layer_ladder.h"
+#include <zmk/events/underglow_color_changed.h>
 #endif
 
 #ifdef CONFIG_NICE_OLED_WIDGET_RAW_HID
@@ -1044,6 +1045,9 @@ ZMK_DISPLAY_WIDGET_LISTENER(widget_layer_status, struct layer_status_state, laye
                             layer_status_get_state)
 
 ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
+#if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_LAYER_LADDER)
+ZMK_SUBSCRIPTION(widget_layer_status, zmk_underglow_color_changed); /* redraw the RGB menu */
+#endif
 #endif
 
 /**

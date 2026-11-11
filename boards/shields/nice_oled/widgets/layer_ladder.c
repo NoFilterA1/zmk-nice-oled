@@ -2,6 +2,7 @@
 #include <zephyr/kernel.h>
 #include <zmk/keymap.h>
 #include <zmk/hid.h>
+#include <zmk/rgb_underglow.h>
 #include <dt-bindings/zmk/modifiers.h>
 #include <fonts.h>
 #include "layer_ladder.h"
@@ -36,12 +37,86 @@ static void label(lv_obj_t *canvas, int x, int y, int w, const lv_font_t *font, 
     canvas_draw_text(canvas, x, y, w, &dsc, txt);
 }
 
+
+#define RGB_LAYER_INDEX 5
+
+#if __has_include(<nzmk/rgb_engine.h>)
+#include <nzmk/rgb_engine.h>
+#define NZMK_RGB 1
+#endif
+
+/* Flipper-style RGB menu, drawn instead of the ladder while the RGB layer (5) is on top */
+static void draw_rgb_menu(lv_obj_t *canvas) {
+    static const char *const effects[] = {"SOL", "BRE", "SPE", "SWI", "LAY", "RIP", "INV"};
+    const int count = 7;
+#ifdef NZMK_RGB
+    const int cur = nzmk_rgb_mode();
+    const bool on = nzmk_rgb_is_on();
+#else
+    const int cur = zmk_rgb_underglow_calc_effect(0);
+    bool on = false;
+    zmk_rgb_underglow_get_state(&on);
+#endif
+    const struct zmk_led_hsb color = zmk_rgb_underglow_calc_brt(0);
+
+    for (int i = 0; i < count; i++) {
+        const int y = 1 + i * ROW_H;
+        if (i == cur) {
+            fill(canvas, 0, y, 32, ROW_H - 1, INK);
+            label(canvas, 2, y + 1, 22, &pixel_operator_mono_8, PAPER, effects[i]);
+            fill(canvas, 24, y + 2, 6, 5, PAPER);
+        } else {
+            label(canvas, 2, y + 1, 22, &pixel_operator_mono_8, INK, effects[i]);
+            outline(canvas, 24, y + 2, 6, 5);
+        }
+    }
+
+    fill(canvas, 0, 73, 32, 1, INK);
+
+    char buf[12];
+    const int y0 = 77;
+    snprintf(buf, sizeof(buf), "H%3d", color.h);
+    label(canvas, 2, y0, 30, &pixel_operator_mono_8, INK, buf);
+    snprintf(buf, sizeof(buf), "S%3d", color.s);
+    label(canvas, 2, y0 + 10, 30, &pixel_operator_mono_8, INK, buf);
+    snprintf(buf, sizeof(buf), "B%3d", color.b);
+    label(canvas, 2, y0 + 20, 30, &pixel_operator_mono_8, INK, buf);
+
+    /* brightness bar */
+    outline(canvas, 2, y0 + 31, 28, 6);
+    fill(canvas, 3, y0 + 32, (26 * color.b) / 100, 4, INK);
+
+    /* on/off bar */
+    if (on) {
+        fill(canvas, 0, 120, 32, 7, INK);
+    } else {
+        outline(canvas, 0, 120, 32, 7);
+    }
+}
+
 void draw_layer_ladder(lv_obj_t *canvas, const struct status_state *state) {
-    const int top = state->layer_index;
+    if (state->layer_index == RGB_LAYER_INDEX) {
+        draw_rgb_menu(canvas);
+        return;
+    }
+    int top = state->layer_index;
+    if (top == 6) {
+        top = 4; /* latched mouse layer = shown as ADJ */
+    }
     const int base = zmk_keymap_layer_active(1) ? 1 : 0;
 
-    /* 1. big base letter */
-    label(canvas, 10, 1, 22, &pixel_operator_mono_22, INK, base == 1 ? "C" : "Q");
+    /* 1. big base letter; replaced by a CAPS / WORD bar only while Caps is active */
+#ifdef NZMK_RGB
+    const int caps = nzmk_caps_state();
+#else
+    const int caps = 0;
+#endif
+    if (caps != 0) {
+        fill(canvas, 0, 0, 32, 23, INK);
+        label(canvas, 4, 5, 28, &pixel_operator_mono_12, PAPER, caps == NZMK_CAPS_LOCK ? "CAPS" : "WORD");
+    } else {
+        label(canvas, 10, 1, 22, &pixel_operator_mono_22, INK, base == 1 ? "C" : "Q");
+    }
     fill(canvas, 0, 24, 32, 1, INK);
 
     /* 2. ladder: base layer and active layer are inverted bars */
